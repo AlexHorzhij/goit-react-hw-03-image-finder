@@ -2,15 +2,15 @@ import PropTypes from 'prop-types';
 
 import { ImageGalleryCart, ImageGalleryItemImage } from './ImageGalleryItem.styled';
 
-export function ImageGalleryItem({url, alt, openModal, largeImageURL}) {
+export function ImageGalleryItem({url, alt, openModal, index}) {
     return <ImageGalleryCart onClick={openModal}>
-        <ImageGalleryItemImage src={url} alt={alt}  id={largeImageURL}/>
+        <ImageGalleryItemImage src={url} alt={alt}  id={index}/>
     </ImageGalleryCart>
-}
+};
 
 ImageGalleryItem.propTypes = {
-    url: PropTypes.string,
-    alt: PropTypes.string,
-    openModal: PropTypes.func,
-    largeImageURL:PropTypes.string,
-}
+    url: PropTypes.string.isRequired,
+    alt: PropTypes.string.isRequired,
+    openModal: PropTypes.func.isRequired,
+    index: PropTypes.number.isRequired,
+};

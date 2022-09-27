@@ -10,11 +10,11 @@ export class Modal extends Component {
 
     componentDidMount() {
         document.addEventListener('keydown', this.modalClose)
-    }
+    };
 
     componentWillUnmount() {
         document.removeEventListener('keydown', this.modalClose)
-    }
+    };
 
     modalClose = (e) => {
         const { closeModal } = this.props;
@@ -23,19 +23,23 @@ export class Modal extends Component {
         if (target === currentTarget || e.code === 'Escape') {
             closeModal()
         };
-    }
+    };
 
     render() {
-        const { url } = this.props;
+        const { img } = this.props;
 
         return createPortal(<Overlay onClick={this.modalClose}>
             <ModalWindow >
-                <img src={url} alt="" />
+                <img src={img.largeImageURL} alt={img.tags} />
             </ModalWindow>
         </Overlay>, modalRoot);
     };
 };
 
 Modal.propTypes = {
-    closeModal: PropTypes.func,
-}
+    closeModal: PropTypes.func.isRequired,
+    img: PropTypes.shape({
+        largeImageURL: PropTypes.string.isRequired,
+        tags: PropTypes.string.isRequired,
+    })
+};

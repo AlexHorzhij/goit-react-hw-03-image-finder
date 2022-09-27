@@ -2,11 +2,11 @@ import { Component } from "react";
 
 import { Wrapper } from './App.styled';
 import { Searchbar } from './Searchbar/Searchbar';
-import { getImages } from './services/API';
+import { getImages } from '../services/API';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Modal } from './Modal/Modal';
 import { LoadButton } from './Button/Button';
-import { Loader } from './Loader/Loader'
+import { Loader } from './Loader/Loader';
 
 export class App extends Component {
   state = {
@@ -19,10 +19,11 @@ export class App extends Component {
   };
 
   openModal = (e) => {
-    
-    const largeImageURL = e.target.id
+    const {data} = this.state
+    const imgIndex = e.target.id
+    const largeImage = data[imgIndex]
     this.setState({
-      imageModal: largeImageURL,
+      imageModal: largeImage,
       modalShow: true,
     })
   };
@@ -33,53 +34,75 @@ export class App extends Component {
       modalShow: false,
     })
   };
-
-  LoadMore = async () => {
-    const { searchImg, page, data } = this.state;
-    const response = await getImages(searchImg, page);
+  
+  LoadMore = () => {
+    const { page } = this.state;
 
     this.setState({
-      data: [...data, ...response.data.hits],
       page: page + 1,
     });
   };
 
-  changeInputValue = (e) => {
-    this.setState({
-      searchImg: e.target.value,
-    });
-  };
+  async componentDidUpdate(_, prew) {
+    const { searchImg, page, data } = this.state;
 
-  searchImg = async () => {
-     this.setState({
+    if (page !== prew.page) {
+    const response = await getImages(searchImg, page);
+    this.setState({
+      data: [...data, ...response.data.hits],
+    });
+    }
+    if(searchImg !== prew.searchImg){
+        this.setState({
       loader: true,
     });
-    const response = await getImages(this.state.searchImg);
+    const response = await getImages(searchImg);
     this.setState({
       data: response.data.hits,
       loader: false,
     });
+    }
   };
 
-  async componentDidMount() {
+  // async componentDidMount() {
+  //   const {page, searchImg} = this.state
+  //     this.setState({
+  //     loader: true,
+  //   });
+  //   const response = await getImages(searchImg);
+  //   const data = response.data.hits;
+  //   this.setState({
+  //     data,
+  //     page: page + 1,
+  //     loader: false,
+  //   });
+  // };
+  
+  // LoadMore = async () => {
+    // const { searchImg, page, data } = this.state;
+    // const response = await getImages(searchImg, page);
+
+    // this.setState({
+    //   data: [...data, ...response.data.hits],
+    //   page: page + 1,
+    // });
+  // };
+
+  searchImage = (e) => {
+    if (e.search !== this.state.searchImg) {
       this.setState({
-      loader: true,
-    });
-    const response = await getImages(this.state.searchImg);
-    const data = response.data.hits;
-    this.setState({
-      data,
-      page: this.state.page + 1,
-      loader: false,
+      searchImg: e.search,
     })
+    };
   };
+
 
   render() {
     const { data, imageModal, modalShow, loader } = this.state;
     return <Wrapper>
-      <Searchbar searchImage={this.searchImg} changeInputValue={this.changeInputValue} value={this.state.searchImg } />   
+      <Searchbar  searchImage={this.searchImage} />   
       <ImageGallery images={data} openModal={this.openModal} />
-      {modalShow && <Modal url={imageModal} closeModal={this.closeModal} />}
+      {modalShow && <Modal img={imageModal} closeModal={this.closeModal} />}
       {data.length > 0 && <LoadButton LoadMore={this.LoadMore} />}
       {loader && <Loader/>}
     </Wrapper>
@@ -87,3 +110,24 @@ export class App extends Component {
 };
 
 
+//  render() {
+//     const { data, imageModal, modalShow, loader } = this.state;
+//     return <Wrapper>
+//       <Searchbar searchImage={this.searchImg} changeInputValue={this.changeInputValue} value={this.state.searchImg } />   
+//       <ImageGallery images={data} openModal={this.openModal} />
+//       {modalShow && <Modal img={imageModal} closeModal={this.closeModal} />}
+//       {data.length > 0 && <LoadButton LoadMore={this.LoadMore} />}
+//       {loader && <Loader/>}
+//     </Wrapper>
+//   };
+
+  // searchImg = async () => {
+  //    this.setState({
+  //     loader: true,
+  //   });
+  //   const response = await getImages(this.state.searchImg);
+  //   this.setState({
+  //     data: response.data.hits,
+  //     loader: false,
+  //   });
+  // };

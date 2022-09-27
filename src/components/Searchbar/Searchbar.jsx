@@ -5,9 +5,14 @@ import { BsSearch } from "react-icons/bs";
 import {Header, SearchForm, SearchFormButton, SearchFormButtonLabel, SearchFormInput } from './Searchbar.styled';
 
 
-export function Searchbar({searchImage, changeInputValue, value}) {
+export function Searchbar({ searchImage}) {
+  function handleSubmit(value, {resetForm}) {
+    searchImage(value)
+    resetForm()
+}
+
   return <Header >
-    <Formik initialValues={{search: ''}} onSubmit={searchImage}>
+    <Formik initialValues={{search: ''}} onSubmit={handleSubmit}>
     <SearchForm>
         <SearchFormButton type="submit">
           <BsSearch size={25}/>
@@ -19,17 +24,13 @@ export function Searchbar({searchImage, changeInputValue, value}) {
         type="text"
         autoComplete="off"
         autoFocus
-          placeholder="Search images and photos"
-          onChange={changeInputValue}
-          value={value}
+        placeholder="Search images and photos"
         />
       </SearchForm>
     </Formik>
   </Header>
-}
+};
 
 Searchbar.propTypes = {
-  searchImage: PropTypes.func,
-  changeInputValue: PropTypes.func,
-  value: PropTypes.string,
-}
+  searchImage: PropTypes.func.isRequired,
+};
